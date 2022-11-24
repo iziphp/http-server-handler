@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpStandard\HttpServerHandler;
 
 use PhpStandard\HttpServerHandler\Exceptions\MissingRequestHandlerException;
@@ -15,8 +17,8 @@ class HttpServerHandler implements RequestHandlerInterface
     private array $queue;
 
     /**
-     * @param (MiddlewareInterface|RequestHandlerInterface)[] $queue 
-     * @return void 
+     * @param array<MiddlewareInterface|RequestHandlerInterface> ...$queue
+     * @return void
      */
     public function __construct(
         MiddlewareInterface|RequestHandlerInterface ...$queue
