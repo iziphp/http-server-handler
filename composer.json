@@ -1,11 +1,11 @@
 {
-    "name": "phpstandard/library",
-    "description": "Skeleton to create a composer library",
+    "name": "phpstandard/http-server-handler",
+    "description": "Http server request handler. PSR-15 implementation.",
     "type": "project",
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "PhpStandard\\PackageNamespace\\": "src/"
+            "PhpStandard\\HttpServerHandler\\": "src/"
         }
     },
     "authors": [

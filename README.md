@@ -1,9 +1,9 @@
-# phpstandard/library
+# phpstandard/request-handler
 
-Skeleton to create a composer library
+Http server request handler. PSR-15 implementation.
 
 ## Installation
 
 ```bash
-composer create-project phpstandard/library
+composer require phpstandard/request-handler
 ```
