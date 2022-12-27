@@ -1,7 +1,7 @@
 {
     "name": "phpstandard/http-server-handler",
     "description": "Http server request handler. PSR-15 implementation.",
-    "type": "project",
+    "type": "library",
     "license": "MIT",
     "autoload": {
         "psr-4": {
