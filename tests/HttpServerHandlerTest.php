@@ -1,43 +1,46 @@
 <?php
 
-declare(strict_types=1);
-
-namespace PhpStandard\HttpServerHandler\Tests;
-
-use Laminas\Diactoros\ServerRequestFactory;
-use PhpStandard\HttpServerHandler\HttpServerHandler;
 use PHPUnit\Framework\TestCase;
+use Easy\HttpServerHandler\HttpServerHandler;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 class HttpServerHandlerTest extends TestCase
 {
-    /** @test */
-    public function isImplementingRequestHandlerInterface()
+    public function testHandleWithNoMiddlewares()
     {
-        $handler = new HttpServerHandler();
-        $this->assertInstanceOf(RequestHandlerInterface::class, $handler);
+        $request = $this->createMock(ServerRequestInterface::class);
+
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler->expects($this->once())
+            ->method('handle')
+            ->with($request)
+            ->willReturn($this->createMock(ResponseInterface::class));
+
+        $httpServerHandler = new HttpServerHandler($handler);
+
+        $response = $httpServerHandler->handle($request);
+
+        $this->assertInstanceOf(ResponseInterface::class, $response);
     }
 
-    /** @test */
-    public function isProcessingMiddlewares()
+    public function testHandleWithOneMiddleware()
     {
-        $factory = new ServerRequestFactory();
-        $req = $factory->createServerRequest('GET', '/');
+        $request = $this->createMock(ServerRequestInterface::class);
+        $response = $this->createMock(ResponseInterface::class);
 
-        $values = [uniqid(), uniqid(), uniqid()];
-        $stack = [];
+        $middleware = $this->createMock(MiddlewareInterface::class);
+        $middleware->expects($this->once())
+            ->method('process')
+            ->with($request, $this->isInstanceOf(HttpServerHandler::class))
+            ->willReturn($response);
 
-        foreach ($values as $val) {
-            $stack[] = new MockMiddleware($val);
-        }
-        $stack[] = new MockRequestHandler();
+        $handler = $this->createMock(RequestHandlerInterface::class);
 
-        $handler = new HttpServerHandler(...$stack);
-        $resp = $handler->handle($req);
+        $httpServerHandler = new HttpServerHandler($handler, $middleware);
 
-        $resp->getBody()->rewind();
-
-        $responseValue = $resp->getBody()->getContents();
-        $this->assertEquals(end($values), $responseValue);
+        $this->assertSame($response, $httpServerHandler->handle($request));
     }
 }

@@ -1,11 +1,11 @@
 {
-    "name": "phpstandard/http-server-handler",
+    "name": "iziphp/http-server-handler",
     "description": "Http server request handler. PSR-15 implementation.",
     "type": "library",
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "PhpStandard\\HttpServerHandler\\": "src/"
+            "Easy\\HttpServerHandler\\": "src/"
         },
         "exclude-from-classmap": [
             "/tests/"
@@ -13,7 +13,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "PhpStandard\\HttpServerHandler\\Tests\\": "tests/"
+            "Easy\\HttpServerHandler\\Tests\\": "tests/"
         }
     },
     "authors": [
@@ -23,7 +23,7 @@
         }
     ],
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
         "psr/http-server-handler": "^1.0",
         "psr/http-server-middleware": "^1.0"
     },

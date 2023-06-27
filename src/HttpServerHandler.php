@@ -2,26 +2,27 @@
 
 declare(strict_types=1);
 
-namespace PhpStandard\HttpServerHandler;
+namespace Easy\HttpServerHandler;
 
-use PhpStandard\HttpServerHandler\Exceptions\MissingRequestHandlerException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-/** @package PhpStandard\HttpServerHandler */
+/** @package Easy\HttpServerHandler */
 class HttpServerHandler implements RequestHandlerInterface
 {
-    /** @var array<MiddlewareInterface|RequestHandlerInterface> $queue */
+    /** @var array<MiddlewareInterface> $queue */
     private array $queue;
 
     /**
-     * @param array<MiddlewareInterface|RequestHandlerInterface> ...$queue
+     * @param RequestHandlerInterface $handler
+     * @param array<MiddlewareInterface> ...$queue
      * @return void
      */
     public function __construct(
-        MiddlewareInterface|RequestHandlerInterface ...$queue
+        private RequestHandlerInterface $handler,
+        MiddlewareInterface ...$queue
     ) {
         $this->queue = $queue;
     }
@@ -31,19 +32,15 @@ class HttpServerHandler implements RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        if (empty($this->queue)) {
-            throw new MissingRequestHandlerException();
-        }
+        $entry = $this->queue[0] ?? null;
 
-        $entry = $this->queue[0];
-
-        if ($entry instanceof MiddlewareInterface) {
+        if ($entry && $entry instanceof MiddlewareInterface) {
             $handler = clone $this;
             $handler->queue = array_slice($this->queue, 1);
 
             return $entry->process($request, $handler);
         }
 
-        return $entry->handle($request);
+        return $this->handler->handle($request);
     }
 }
